@@ -31,7 +31,7 @@ class ShufflenetUnit(nn.Module):
         self.conv1x1_1 = conv1x1(in_channels=inplanes, out_channels=planes)
         self.conv1x1_1_bn = nn.BatchNorm2d(planes)
 
-        self.dwconv3x3 = conv3x3(in_channels=planes, out_channels=planes, stride=stride)
+        self.dwconv3x3 = conv3x3(in_channels=planes, out_channels=planes, stride=stride, groups=planes)
         self.dwconv3x3_bn= nn.BatchNorm2d(planes)
 
         self.conv1x1_2 = conv1x1(in_channels=planes, out_channels=planes)
@@ -69,7 +69,6 @@ class ShufflenetUnit(nn.Module):
         x2 = self.relu(x2)
          
         x2 = self.dwconv3x3(x2)
-        x2 = self.dwconv3x3_bn(x2)
         x2 = self.dwconv3x3_bn(x2)
     
         x2 = self.conv1x1_2(x2)
@@ -148,7 +147,7 @@ class ShuffleNet(nn.Module):
         x = self.globalpool(x)
         #print("x6.size:\t", x.size())
 
-        x = x.view(x.size(0), -1)
+        x = x.view(-1, 1024)
         x = self.fc(x)
 
         return x
